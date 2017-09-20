@@ -17,6 +17,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    dataBinding {
+        enabled true
+    }
 }
 
 dependencies {
@@ -29,4 +33,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
+    compile "io.reactivex.rxjava2:rxjava:2.1.3"
 }
