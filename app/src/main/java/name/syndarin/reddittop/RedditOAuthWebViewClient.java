@@ -1,6 +1,7 @@
 package name.syndarin.reddittop;
 
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -34,7 +35,15 @@ public class RedditOAuthWebViewClient extends WebViewClient {
         if (uri.toString().startsWith(redirectUrl)) {
             String state = uri.getQueryParameter("state");
             if (state.equals(randomStateString)) {
-                tokenSubject.onSuccess(uri.getQueryParameter("code"));
+
+                String code = uri.getQueryParameter("code");
+                if (!TextUtils.isEmpty(code)) {
+                    tokenSubject.onSuccess(uri.getQueryParameter("code"));
+                } else {
+                    String error = uri.getQueryParameter("error");
+                    tokenSubject.onError(new OAuthException(error));
+                }
+
             } else {
                 tokenSubject.onError(new IllegalArgumentException("Suspicious response"));
             }

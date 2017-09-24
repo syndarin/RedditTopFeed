@@ -6,7 +6,9 @@ import android.webkit.WebViewClient;
 
 import io.reactivex.functions.BiConsumer;
 import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by syndarin on 9/20/17.
@@ -23,17 +25,16 @@ public class ViewModelLogin {
         RedditOAuthWebViewClient client = new RedditOAuthWebViewClient(OAuthUrlBuilder.REDIRECT_URI, "RANDOM_STRING");
         webViewClient.set(client);
 
+        RedditHttpClient httpClient = new RedditHttpClient(new OkHttpClient());
+
         client.getTokenObservable()
-                .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String s) throws Exception {
-                        Log.i("ZZZ", "Code received " + s);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        throwable.printStackTrace();
-                    }
-                });
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .flatMap(code -> httpClient.obtainAccessToken(OAuthUrlBuilder.CLIENT_ID, code, OAuthUrlBuilder.REDIRECT_URI))
+
+                .subscribe(oauthResponse -> {
+                            Log.i("ZZZ", "OAuthCode " + oauthResponse);
+                        }
+                , Throwable::printStackTrace);
     }
 }

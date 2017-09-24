@@ -8,7 +8,7 @@ import okhttp3.HttpUrl;
 
 public class OAuthUrlBuilder {
 
-    private static final String CLIENT_ID = "9wQAF4yTB6o2hA";
+    public static final String CLIENT_ID = "9wQAF4yTB6o2hA";
     private static final String RESPONSE_TYPE = "code";
     public static final String REDIRECT_URI = "http://127.0.0.1/callback";
     private static final String SCOPE = "read";
