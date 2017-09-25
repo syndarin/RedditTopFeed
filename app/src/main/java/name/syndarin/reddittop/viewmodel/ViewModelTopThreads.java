@@ -12,6 +12,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import name.syndarin.reddittop.entity.RedditItem;
@@ -39,6 +40,8 @@ public class ViewModelTopThreads {
 
     private CompositeDisposable subscriptions;
 
+    private Disposable subscriptionLoadMore;
+
     public void onResumeView() {
         subscriptions = new CompositeDisposable();
 
@@ -61,9 +64,17 @@ public class ViewModelTopThreads {
     }
 
     public void loadMore() {
-        subscriptions.add(redditTopRepository.loadNextChunk()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this.redditItems::addAll, throwable -> Log.e(TAG, "Can't reload items", throwable)));
+        Log.i("ZZZ", "load more items");
+        if (subscriptionLoadMore == null) {
+            subscriptionLoadMore = redditTopRepository.loadNextChunk()
+                    .subscribeOn(Schedulers.io())
+                    .doFinally(() -> {
+                        subscriptionLoadMore.dispose();
+                        subscriptionLoadMore = null;
+                    })
+                .subscribe(this.redditItems::addAll, throwable -> Log.e(TAG, "Can't reload items", throwable));
+        }
+
     }
 
 }

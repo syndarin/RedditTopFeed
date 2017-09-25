@@ -9,7 +9,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import name.syndarin.reddittop.entity.RedditItem;
 import name.syndarin.reddittop.entity.RedditTopResponse;
-import name.syndarin.reddittop.entity.RedditTopResponseData;
 import name.syndarin.reddittop.entity.RedditTopResponseItem;
 import name.syndarin.reddittop.reddit.RedditClient;
 
@@ -19,7 +18,7 @@ import name.syndarin.reddittop.reddit.RedditClient;
 
 public class RedditTopRepository {
 
-    private static final int COUNT = 10;
+    private static final int LIMIT = 10;
 
     private RedditClient redditClient;
 
@@ -48,7 +47,7 @@ public class RedditTopRepository {
     }
 
     private Single<List<RedditItem>> requestRedditTop() {
-        return redditClient.loadTop(afterParam, COUNT)
+        return redditClient.loadTop(afterParam, LIMIT)
                 .map(rawResponse -> gson.fromJson(rawResponse, RedditTopResponse.class))
                 .map(RedditTopResponse::getData)
                 .map(data -> {

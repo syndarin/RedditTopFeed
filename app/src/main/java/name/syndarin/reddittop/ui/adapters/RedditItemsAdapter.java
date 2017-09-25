@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.subjects.Subject;
@@ -37,9 +38,9 @@ public class RedditItemsAdapter extends RecyclerView.Adapter<RedditItemsAdapter.
         }
     }
 
-    private List<RedditItem> items;
+    private List<RedditItem> items = Collections.emptyList();
 
-    private Subject thumbnailClickSubject;
+    private Subject<RedditItem> thumbnailClickSubject;
 
     public RedditItemsAdapter(Subject<RedditItem> thumbnailClickSubject) {
         this.thumbnailClickSubject = thumbnailClickSubject;
@@ -63,7 +64,8 @@ public class RedditItemsAdapter extends RecyclerView.Adapter<RedditItemsAdapter.
     }
 
     public void updateItems(List<RedditItem> items) {
+        int insertPosition = this.items.size();
         this.items = items;
-        notifyDataSetChanged();
+        notifyItemRangeInserted(insertPosition, items.size());
     }
 }

@@ -38,7 +38,7 @@ public class RedditClient {
             }
 
             if (count > 0) {
-                urlBuilder.addQueryParameter("count", String.valueOf(count));
+                urlBuilder.addQueryParameter("limit", String.valueOf(count));
             }
 
             Request request = new Request.Builder()

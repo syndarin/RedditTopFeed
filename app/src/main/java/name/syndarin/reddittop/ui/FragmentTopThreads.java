@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +36,7 @@ import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
  * Created by syndarin on 9/25/17.
  */
 
-public class FragmentTopThreads extends Fragment {
+public class FragmentTopThreads extends Fragment implements View.OnScrollChangeListener {
 
     @BindingAdapter({"items", "clickSubject"})
     public static void bindAdapter(RecyclerView view, List<RedditItem> items, Subject<RedditItem> clickSubject) {
@@ -60,7 +64,13 @@ public class FragmentTopThreads extends Fragment {
 
     @BindingAdapter("created")
     public static void formatCreatedAt(TextView view, long createTimestampUtc) {
-        long millisSinceCreation = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(createTimestampUtc);
+        long createdAtMillis = TimeUnit.SECONDS.toMillis(createTimestampUtc);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(createdAtMillis);
+        String createdDate = SimpleDateFormat.getDateTimeInstance().format(calendar.getTime());
+
+        long millisSinceCreation = System.currentTimeMillis() - createdAtMillis;
 
         long hours = TimeUnit.MILLISECONDS.toHours(millisSinceCreation);
         long minutesChunk = millisSinceCreation - TimeUnit.HOURS.toMillis(hours);
@@ -70,8 +80,15 @@ public class FragmentTopThreads extends Fragment {
 
         String createdString = resources.getString(R.string.template_time_interval, hours, minutes);
 
-        view.setText(view.getResources().getString(R.string.template_created, createdString));
+        view.setText(view.getResources().getString(R.string.template_created, createdDate, createdString));
     }
+
+    @BindingAdapter("scrollListener")
+    public static void setScrollListener(RecyclerView view, View.OnScrollChangeListener listener) {
+        view.setOnScrollChangeListener(listener);
+    }
+
+    public final ObservableField<View.OnScrollChangeListener> onScrollChangeListener = new ObservableField<>(this);
 
     private ViewModelTopThreads viewModel;
 
@@ -81,6 +98,7 @@ public class FragmentTopThreads extends Fragment {
         BindingFragmentRedditTop binding = DataBindingUtil.inflate(inflater, R.layout.fragment_reddit_top, container, false);
         viewModel = new ViewModelTopThreads();
         binding.setViewModel(viewModel);
+        binding.setFragment(this);
         return binding.getRoot();
     }
 
@@ -106,5 +124,18 @@ public class FragmentTopThreads extends Fragment {
     public void onPause() {
         super.onPause();
         viewModel.onPauseView();
+    }
+
+    @Override
+    public void onScrollChange(View view, int i, int i1, int i2, int i3) {
+        RecyclerView recyclerView = (RecyclerView) view;
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        int totalItems = layoutManager.getItemCount();
+        int visibleItems = layoutManager.getChildCount();
+        int firstVisible = layoutManager.findFirstVisibleItemPosition();
+
+        if ((firstVisible + visibleItems) >= totalItems) {
+            viewModel.loadMore();
+        }
     }
 }

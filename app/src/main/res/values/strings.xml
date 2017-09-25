@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RedditTop</string>
     <string name="template_num_comments">Comments: %1$d</string>
-    <string name="template_created">Created: %1$s ago</string>
+    <string name="template_created">Created: %1$s, %2$s ago</string>
     <string name="label_created_more_than_day">more than day</string>
     <string name="template_time_interval">%1$d hours and %2$d minutes</string>
 </resources>

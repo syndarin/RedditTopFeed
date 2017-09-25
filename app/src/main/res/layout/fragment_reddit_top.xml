@@ -8,12 +8,17 @@
             name="viewModel"
             type="name.syndarin.reddittop.viewmodel.ViewModelTopThreads"/>
 
+        <variable
+            name="fragment"
+            type="name.syndarin.reddittop.ui.FragmentTopThreads"/>
+
     </data>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:items="@{viewModel.redditItems}"
-        app:clickSubject="@{viewModel.thumbnailClickSubject}"/>
+        app:clickSubject="@{viewModel.thumbnailClickSubject}"
+        app:scrollListener="@{fragment.onScrollChangeListener}"/>
 
 </layout>
