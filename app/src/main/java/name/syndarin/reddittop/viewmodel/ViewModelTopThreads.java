@@ -3,6 +3,7 @@ package name.syndarin.reddittop.viewmodel;
 import android.databinding.ObservableArrayList;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import name.syndarin.reddittop.entity.RedditItem;
 import name.syndarin.reddittop.repository.RedditTopRepository;
+import name.syndarin.reddittop.ui.navigation.ExternalNavigator;
 
 /**
  * Created by syndarin on 9/25/17.
@@ -32,21 +34,25 @@ public class ViewModelTopThreads {
     @Inject
     RedditTopRepository redditTopRepository;
 
+    @Inject
+    ExternalNavigator externalNavigator;
+
     private CompositeDisposable subscriptions;
 
     public void onResumeView() {
         subscriptions = new CompositeDisposable();
 
         subscriptions.add(thumbnailClickSubject.get()
-                .subscribe(redditTopResponseItem -> {
-                    //TODO open picture url
+                .subscribe(redditItem -> {
+                    String url = redditItem.getFullSizePreview();
+                    if (!TextUtils.isEmpty(url)) {
+                        externalNavigator.openExternalLink(url);
+                    }
                 }));
 
         subscriptions.add(redditTopRepository.reloadItems()
                 .subscribeOn(Schedulers.io())
-                .subscribe(redditItems -> {
-                    this.redditItems.addAll(redditItems);
-                }, throwable -> Log.e(TAG, "Can't reload items", throwable)));
+                .subscribe(this.redditItems::addAll, throwable -> Log.e(TAG, "Can't reload items", throwable)));
     }
 
     public void onPauseView() {
@@ -57,9 +63,7 @@ public class ViewModelTopThreads {
     public void loadMore() {
         subscriptions.add(redditTopRepository.loadNextChunk()
                 .subscribeOn(Schedulers.io())
-                .subscribe(redditItems -> {
-                    this.redditItems.addAll(redditItems);
-                }, throwable -> Log.e(TAG, "Can't reload items", throwable)));
+                .subscribe(this.redditItems::addAll, throwable -> Log.e(TAG, "Can't reload items", throwable)));
     }
 
 }

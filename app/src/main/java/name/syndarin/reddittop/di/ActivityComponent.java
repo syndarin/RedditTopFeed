@@ -1,6 +1,7 @@
 package name.syndarin.reddittop.di;
 
 import dagger.Subcomponent;
+import name.syndarin.reddittop.ui.navigation.ExternalNavigator;
 import name.syndarin.reddittop.ui.navigation.Navigator;
 import name.syndarin.reddittop.viewmodel.ViewModelLogin;
 import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
@@ -14,6 +15,8 @@ import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
 public interface ActivityComponent {
 
     Navigator getNavigator();
+
+    ExternalNavigator getExternalNavigator();
 
     void inject(ViewModelLogin viewModel);
 

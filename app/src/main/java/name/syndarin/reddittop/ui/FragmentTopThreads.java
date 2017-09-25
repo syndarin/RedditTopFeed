@@ -60,7 +60,7 @@ public class FragmentTopThreads extends Fragment {
 
     @BindingAdapter("created")
     public static void formatCreatedAt(TextView view, long createTimestampUtc) {
-        long millisSinceCreation = System.currentTimeMillis() - createTimestampUtc;
+        long millisSinceCreation = System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(createTimestampUtc);
 
         long hours = TimeUnit.MILLISECONDS.toHours(millisSinceCreation);
         long minutesChunk = millisSinceCreation - TimeUnit.HOURS.toMillis(hours);

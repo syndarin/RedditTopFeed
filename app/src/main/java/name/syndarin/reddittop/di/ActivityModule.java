@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import dagger.Module;
 import dagger.Provides;
+import name.syndarin.reddittop.ui.navigation.ExternalNavigator;
 import name.syndarin.reddittop.ui.navigation.Navigator;
 
 /**
@@ -23,6 +24,12 @@ public class ActivityModule {
     @ActivityScope
     Navigator getNavigator() {
         return new Navigator(activity.getSupportFragmentManager());
+    }
+
+    @Provides
+    @ActivityScope
+    ExternalNavigator getExternalNavigator() {
+        return new ExternalNavigator(activity);
     }
 
 }
