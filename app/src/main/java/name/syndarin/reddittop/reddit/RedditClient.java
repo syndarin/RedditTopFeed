@@ -1,6 +1,13 @@
 package name.syndarin.reddittop.reddit;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import io.reactivex.Single;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by syndarin on 9/24/17.
@@ -8,21 +15,42 @@ import okhttp3.OkHttpClient;
 
 public class RedditClient {
 
-    private TokenStorage tokenStorage;
+    private static final String URL = "https://oauth.reddit.com/top";
+
+    private RedditOAuthAuthenticator authenticator;
 
     private OkHttpClient httpClient;
 
-    public RedditClient(TokenStorage tokenStorage, OkHttpClient httpClient) {
-        this.tokenStorage = tokenStorage;
+    public RedditClient(RedditOAuthAuthenticator authenticator, OkHttpClient httpClient) {
+        this.authenticator = authenticator;
         this.httpClient = httpClient;
     }
 
-    public boolean isReady() {
-        return tokenStorage.isTokenValid();
-    }
+    public Single<String> loadTop(String after, int count) {
+        return Single.fromCallable(() -> {
+            HttpUrl.Builder urlBuilder = new HttpUrl.Builder()
+                    .scheme("https")
+                    .host("oauth.reddit.com")
+                    .addPathSegment("top");
 
-    public void loadTop(int offset, int limit) {
-        // TODO
+            if(!TextUtils.isEmpty(after)) {
+                urlBuilder.addQueryParameter("after", after);
+            }
+
+            if (count > 0) {
+                urlBuilder.addQueryParameter("count", String.valueOf(count));
+            }
+
+            Request request = new Request.Builder()
+                    .url(urlBuilder.build())
+                    .header("Authorization", "bearer " + authenticator.getAccessToken())
+                    .build();
+
+            Response response = httpClient.newCall(request).execute();
+            String result = response.body().string();
+            Log.i("ZZZ", String.valueOf(result));
+            return result;
+        });
     }
 
 }

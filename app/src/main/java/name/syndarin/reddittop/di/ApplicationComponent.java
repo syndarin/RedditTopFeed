@@ -5,7 +5,9 @@ import com.google.gson.Gson;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import name.syndarin.reddittop.reddit.RedditClient;
 import name.syndarin.reddittop.reddit.RedditOAuthAuthenticator;
+import name.syndarin.reddittop.repository.RedditTopRepository;
 import name.syndarin.reddittop.ui.MainActivity;
 
 /**
@@ -19,6 +21,8 @@ public interface ApplicationComponent {
     Gson getGson();
 
     RedditOAuthAuthenticator getRedditOAuthAuthenticator();
+
+    RedditTopRepository getRedditTopRepository();
 
     void inject(MainActivity activity);
 

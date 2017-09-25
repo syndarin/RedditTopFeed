@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 
 import name.syndarin.reddittop.R;
 import name.syndarin.reddittop.ui.FragmentLogin;
-import name.syndarin.reddittop.ui.FragmentRedditTop;
+import name.syndarin.reddittop.ui.FragmentTopThreads;
 
 /**
  * Created by syndarin on 9/24/17.
@@ -24,7 +24,7 @@ public class Navigator {
     }
 
     public void showRedditTop50() {
-        replaceFragment(new FragmentRedditTop());
+        replaceFragment(new FragmentTopThreads());
     }
 
     public void showThreadPicture(String url) {
