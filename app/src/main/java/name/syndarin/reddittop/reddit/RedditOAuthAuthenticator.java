@@ -56,16 +56,11 @@ public class RedditOAuthAuthenticator {
         webViewClient.getRequestTokenObservable()
                 .observeOn(Schedulers.io())
                 .flatMap(requestToken -> obtainAccessToken(requestToken, config.REDIRECT_URI))
-                .map(authResponse -> {
-                    Log.i("ZZZ", authResponse);
-                    return gson.fromJson(authResponse, AuthenticationTokenResponse.class);
-                })
-                //.retry()
+                .map(authResponse -> gson.fromJson(authResponse, AuthenticationTokenResponse.class))
                 .subscribe(response -> {
-                    Log.i("ZZZ", "update response");
                     tokenStorage.update(response);
                     authenticationStatusSubject.onNext(true);
-                }, authenticationStatusSubject::onError );
+                }, authenticationStatusSubject::onError);
     }
 
     public String buildOAuthUrl() {
@@ -86,8 +81,6 @@ public class RedditOAuthAuthenticator {
     }
 
     private Single<String> obtainAccessToken(String code, String redirectUrl) {
-        Log.i("ZZZ", "obtain access token " + code);
-
         SingleSubject<String> resultSubject = SingleSubject.create();
 
         RequestBody body = new FormBody.Builder()
@@ -106,7 +99,6 @@ public class RedditOAuthAuthenticator {
 
         try {
             Response response = okHttpClient.newCall(request).execute();
-            Log.i("ZZZ", "Response code " + response.code());
             resultSubject.onSuccess(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();

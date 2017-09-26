@@ -22,4 +22,8 @@ public class ExternalNavigator {
         activity.startActivity(intent);
     }
 
+    public void finish() {
+        activity.finish();
+    }
+
 }

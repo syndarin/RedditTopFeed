@@ -48,7 +48,6 @@ public class RedditClient {
 
             Response response = httpClient.newCall(request).execute();
             String result = response.body().string();
-            Log.i("ZZZ", String.valueOf(result));
             return result;
         });
     }
