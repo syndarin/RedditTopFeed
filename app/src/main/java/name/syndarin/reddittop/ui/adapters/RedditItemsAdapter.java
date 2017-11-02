@@ -12,6 +12,7 @@ import io.reactivex.subjects.Subject;
 import name.syndarin.reddittop.R;
 import name.syndarin.reddittop.databinding.BindingItemRedditTop;
 import name.syndarin.reddittop.entity.RedditItem;
+import name.syndarin.reddittop.ui.binders.BindingComponentItemRedditTop;
 import name.syndarin.reddittop.viewmodel.ViewModelRedditItem;
 
 /**
@@ -49,7 +50,7 @@ public class RedditItemsAdapter extends RecyclerView.Adapter<RedditItemsAdapter.
     @Override
     public RedditItemsAdapter.RedditItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        BindingItemRedditTop binding = DataBindingUtil.inflate(inflater, R.layout.item_reddit_top, parent, false);
+        BindingItemRedditTop binding = BindingItemRedditTop.inflate(inflater, new BindingComponentItemRedditTop());
         return new RedditItemViewHolder(binding, thumbnailClickSubject);
     }
 
