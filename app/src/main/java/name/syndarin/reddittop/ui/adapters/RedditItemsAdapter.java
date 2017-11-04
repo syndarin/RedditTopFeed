@@ -43,10 +43,6 @@ public class RedditItemsAdapter extends RecyclerView.Adapter<RedditItemsAdapter.
 
     private Subject<RedditItem> thumbnailClickSubject;
 
-    public RedditItemsAdapter(Subject<RedditItem> thumbnailClickSubject) {
-        this.thumbnailClickSubject = thumbnailClickSubject;
-    }
-
     @Override
     public RedditItemsAdapter.RedditItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -68,5 +64,9 @@ public class RedditItemsAdapter extends RecyclerView.Adapter<RedditItemsAdapter.
         int insertPosition = this.items.size();
         this.items = items;
         notifyItemRangeInserted(insertPosition, items.size());
+    }
+
+    public void setThumbnailClickSubject(Subject<RedditItem> thumbnailClickSubject) {
+        this.thumbnailClickSubject = thumbnailClickSubject;
     }
 }

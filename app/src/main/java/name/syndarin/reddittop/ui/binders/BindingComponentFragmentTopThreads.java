@@ -1,22 +1,19 @@
 package name.syndarin.reddittop.ui.binders;
 
-import android.content.res.Resources;
+import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingComponent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.subjects.Subject;
-import name.syndarin.reddittop.R;
 import name.syndarin.reddittop.entity.RedditItem;
 import name.syndarin.reddittop.ui.adapters.RedditItemsAdapter;
 
@@ -26,22 +23,30 @@ import name.syndarin.reddittop.ui.adapters.RedditItemsAdapter;
 
 public class BindingComponentFragmentTopThreads implements DataBindingComponent {
 
+    private RedditItemsAdapter redditItemsAdapter;
+    private LinearLayoutManager layoutManager;
+
+    private Parcelable layoutManagerSavedState;
+
+    public BindingComponentFragmentTopThreads(Context context) {
+        layoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
+        redditItemsAdapter = new RedditItemsAdapter();
+    }
+
     @BindingAdapter({"items", "clickSubject"})
     public void bindAdapter(RecyclerView view, List<RedditItem> items, Subject<RedditItem> clickSubject) {
         RedditItemsAdapter adapter = (RedditItemsAdapter) view.getAdapter();
         if (adapter == null) {
-            adapter = new RedditItemsAdapter(clickSubject);
-            view.setAdapter(adapter);
-            view.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
+            view.setAdapter(redditItemsAdapter);
+            view.setLayoutManager(layoutManager);
         }
 
-        adapter.updateItems(items);
-    }
+        redditItemsAdapter.setThumbnailClickSubject(clickSubject);
+        redditItemsAdapter.updateItems(items);
 
-    @BindingAdapter("url")
-    public void loadImage(ImageView view, String url) {
-        if (url != null) {
-            Picasso.with(view.getContext()).load(url).into(view);
+        if (layoutManagerSavedState != null && redditItemsAdapter.getItemCount() > 0) {
+            layoutManager.onRestoreInstanceState(layoutManagerSavedState);
+            layoutManagerSavedState = null;
         }
     }
 
@@ -53,5 +58,21 @@ public class BindingComponentFragmentTopThreads implements DataBindingComponent 
     @Override
     public BindingComponentFragmentTopThreads getBindingComponentFragmentTopThreads() {
         return this;
+    }
+
+    public void onSaveInstanceState(Bundle bundle) {
+        Parcelable state = layoutManager.onSaveInstanceState();
+        bundle.putParcelable("threads-layout-manager", state);
+    }
+
+    public void onViewStateRestored(Bundle bundle) {
+        if (bundle != null) {
+            Parcelable state = bundle.getParcelable("threads-layout-manager");
+            if (state != null && redditItemsAdapter.getItemCount() > 0) {
+                layoutManager.onRestoreInstanceState(state);
+            } else {
+                layoutManagerSavedState = state;
+            }
+        }
     }
 }

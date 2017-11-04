@@ -39,11 +39,12 @@ import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
 public class FragmentTopThreads extends Fragment {
 
     private ViewModelTopThreads viewModel;
-    private BindingComponentFragmentTopThreads bindingComponent = new BindingComponentFragmentTopThreads();
+    private BindingComponentFragmentTopThreads bindingComponent;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        bindingComponent = new BindingComponentFragmentTopThreads(getContext());
         BindingFragmentRedditTop binding = BindingFragmentRedditTop.inflate(inflater, bindingComponent);
         viewModel = new ViewModelTopThreads();
         binding.setViewModel(viewModel);
@@ -74,4 +75,18 @@ public class FragmentTopThreads extends Fragment {
         super.onPause();
         viewModel.onPauseView();
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        bindingComponent.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        bindingComponent.onViewStateRestored(savedInstanceState);
+    }
+
+
 }
