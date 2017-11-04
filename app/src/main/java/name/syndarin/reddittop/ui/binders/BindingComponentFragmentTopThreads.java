@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
+import android.view.View;
 
 import java.util.List;
 
@@ -21,7 +19,7 @@ import name.syndarin.reddittop.ui.adapters.RedditItemsAdapter;
  * Created by syndarin on 25.10.17.
  */
 
-public class BindingComponentFragmentTopThreads implements DataBindingComponent {
+public class BindingComponentFragmentTopThreads extends BasicBindingComponent {
 
     private RedditItemsAdapter redditItemsAdapter;
     private LinearLayoutManager layoutManager;
@@ -48,11 +46,6 @@ public class BindingComponentFragmentTopThreads implements DataBindingComponent 
             layoutManager.onRestoreInstanceState(layoutManagerSavedState);
             layoutManagerSavedState = null;
         }
-    }
-
-    @Override
-    public BindingComponentItemRedditTop getBindingComponentItemRedditTop() {
-        return null;
     }
 
     @Override

@@ -18,7 +18,7 @@ import name.syndarin.reddittop.R;
  * Created by syndarin on 25.10.17.
  */
 
-public class BindingComponentItemRedditTop implements DataBindingComponent {
+public class BindingComponentItemRedditTop extends BasicBindingComponent {
 
     @BindingAdapter("url")
     public void loadImage(ImageView view, String url) {
@@ -56,10 +56,5 @@ public class BindingComponentItemRedditTop implements DataBindingComponent {
     @Override
     public BindingComponentItemRedditTop getBindingComponentItemRedditTop() {
         return this;
-    }
-
-    @Override
-    public BindingComponentFragmentTopThreads getBindingComponentFragmentTopThreads() {
-        return null;
     }
 }

@@ -1,10 +1,6 @@
 package name.syndarin.reddittop.ui;
 
 import android.app.Activity;
-import android.content.res.Resources;
-import android.databinding.BindingAdapter;
-import android.databinding.DataBindingUtil;
-import android.databinding.ObservableField;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,22 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import io.reactivex.subjects.Subject;
-import name.syndarin.reddittop.R;
 import name.syndarin.reddittop.databinding.BindingFragmentRedditTop;
 import name.syndarin.reddittop.di.ActivityComponent;
-import name.syndarin.reddittop.entity.RedditItem;
-import name.syndarin.reddittop.ui.adapters.RedditItemsAdapter;
 import name.syndarin.reddittop.ui.binders.BindingComponentFragmentTopThreads;
 import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
 
@@ -36,7 +19,7 @@ import name.syndarin.reddittop.viewmodel.ViewModelTopThreads;
  * Created by syndarin on 9/25/17.
  */
 
-public class FragmentTopThreads extends Fragment {
+public class FragmentTopThreads extends Fragment implements View.OnScrollChangeListener {
 
     private ViewModelTopThreads viewModel;
     private BindingComponentFragmentTopThreads bindingComponent;
@@ -88,5 +71,16 @@ public class FragmentTopThreads extends Fragment {
         bindingComponent.onViewStateRestored(savedInstanceState);
     }
 
+    @Override
+    public void onScrollChange(View view, int currentHorizontal, int currentVertical, int oldHorizontal, int oldVertical) {
+        RecyclerView recyclerView = (RecyclerView) view;
+        LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        int totalItems = layoutManager.getItemCount();
+        int visibleItems = layoutManager.getChildCount();
+        int firstVisible = layoutManager.findFirstVisibleItemPosition();
 
+        if ((firstVisible + visibleItems) >= totalItems) {
+            viewModel.loadMore();
+        }
+    }
 }

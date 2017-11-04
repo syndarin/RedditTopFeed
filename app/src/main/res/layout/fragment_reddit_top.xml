@@ -20,6 +20,7 @@
         android:layout_height="match_parent"
         app:items="@{viewModel.redditItems}"
         app:clickSubject="@{viewModel.thumbnailClickSubject}"
+        app:onScrollChangedListener="@{fragment}"
         />
 
 </layout>
